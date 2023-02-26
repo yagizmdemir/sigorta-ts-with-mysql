@@ -5,7 +5,8 @@
   "main": "server/build/app.js",
   "scripts": {
     "start": "cd server && npm run build && node server/build/app.js",
-    "build": "cd client && npm install && npm run build"
+    "build": "cd client && npm install && npm run build",
+    "dev": "cd server && npm run build && npm run dev"
   },
   "engines": {
     "node": "16.18.0"
@@ -19,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/yagizmdemir/sigorta-ts-with-mysql/issues"
   },
-  "homepage": "https://github.com/yagizmdemir/sigorta-ts-with-mysql#readme"
+  "homepage": "https://github.com/yagizmdemir/sigorta-ts-with-mysql#readme",
+  "dependencies": {
+    "nodemon": "^2.0.20"
+  }
 }
