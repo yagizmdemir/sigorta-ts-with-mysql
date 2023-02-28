@@ -29,26 +29,26 @@ export class policeService implements IPolice {
 			if (result) return new ResponseService(result, 'Success').success(res);
 		});
     }
-    addPolice(res: Response<any, Record<string, any>>, table: string, values: object): Promise<void> {
+    async addPolice(res: Response<any, Record<string, any>>, table: string, values: object): Promise<void> {
         throw new Error('Method not implemented.');
     }
-    deletePolice(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>, res: Response<any, Record<string, any>>, table: string, values: string, where: string): Promise<void> {
+    async deletePolice(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>, res: Response<any, Record<string, any>>, table: string, values: string, where: string): Promise<void> {
         throw new Error('Method not implemented.');
     }
-    updatePolice(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>, res: Response<any, Record<string, any>>): Promise<void> {
+    async updatePolice(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>, res: Response<any, Record<string, any>>): Promise<void> {
         throw new Error('Method not implemented.');
     }
 
+}
 
 
 
+// ekleme
+// çıkartma
+// düzenleme
+// hepsini listeleme
+// bir tane listeleme
 
-/*ekleme
-çıkartma
-düzenleme
-hepsini listeleme
-bir tane listeleme
 
-
-burada bütün ilerleme mantığı Cüneyt Ertaş tarafından oluşturulacak.
-Oluşturulmaması dahilinde götüne yağlı kazık sokulacak. */
+// burada bütün ilerleme mantığı Cüneyt Ertaş tarafından oluşturulacak.
+// Oluşturulmaması dahilinde götüne yağlı kazık sokulacak
