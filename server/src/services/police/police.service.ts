@@ -21,7 +21,7 @@ export class policeService implements IPolice {
                 if (result) return new ResponseService(result, 'Success').success(res);
             });
         }
-    getPolice(req: Request, res: Response, table: string, where: string, search: string): Promise<void> {
+    async getPolice(req: Request, res: Response, table: string, where: string, search: string): Promise<void> {
         const text = `SELECT * FROM ${table} WHERE ${where} = ?`;
 		const operation = mySqlConnection.query(text, search, (err, result) => {
 			if (err != null) return new ResponseService(null, 'Something went wrong').error400(res);
