@@ -35,10 +35,16 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserService = void 0;
 var connect_1 = require("../../utils/connect");
 var response_1 = require("../../utils/response");
+var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+var crypto_1 = __importDefault(require("crypto"));
+var bcrypt_1 = __importDefault(require("bcrypt"));
 var UserService = /** @class */ (function () {
     function UserService() {
     }
@@ -78,19 +84,67 @@ var UserService = /** @class */ (function () {
     };
     UserService.prototype.addUser = function (res, table, values) {
         return __awaiter(this, void 0, void 0, function () {
-            var text, operation;
-            return __generator(this, function (_a) {
-                text = "INSERT INTO ".concat(table, " SET ?");
-                operation = connect_1.mySqlConnection.query(text, values, function (err, result) {
-                    if (err != null) {
-                        console.log(err);
-                        return new response_1.ResponseService(null, 'Something went wrong').error400(res);
-                    }
-                    if (result) {
-                        return new response_1.ResponseService(result, 'Success').created(res);
-                    }
-                });
-                return [2 /*return*/];
+            var password, saltRounds, hashedPassword_1, _a, text, operation;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        _b.trys.push([0, 2, , 3]);
+                        password = crypto_1.default.randomBytes(4).toString('hex');
+                        saltRounds = 10;
+                        return [4 /*yield*/, bcrypt_1.default.hash(password, saltRounds)];
+                    case 1:
+                        hashedPassword_1 = _b.sent();
+                        return [3 /*break*/, 3];
+                    case 2:
+                        _a = _b.sent();
+                        text = "INSERT INTO ".concat(table, " SET ?");
+                        operation = connect_1.mySqlConnection.query(text, { values: values, password: hashedPassword }, function (err, result) {
+                            var sk = process.env.JWT_SECRET;
+                            if (err) {
+                                if (err.code === 'ER_DUP_ENTRY') {
+                                    return new response_1.ResponseService(null, 'Girdiğiniz bilgiler sistemimizde kayıtlı.').error400(res);
+                                }
+                                if (err.code === 'ER_DATA_TOO_LONG') {
+                                    return new response_1.ResponseService(null, 'Girdiğiniz bilgileri tekrar kontrol ediniz.').error400(res);
+                                }
+                                return new response_1.ResponseService(null, 'Server internal error!').error500(res);
+                            }
+                            if (result.insertId) {
+                                var id_1 = result.insertId;
+                                var confirmationPayload = { sub: id_1 };
+                                jsonwebtoken_1.default.sign(confirmationPayload, sk, function (error, encoded) {
+                                    if (encoded) {
+                                        var utext = "UPDATE ".concat(table, " SET confirmation_token = ? WHERE id = ?");
+                                        connect_1.mySqlConnection.query(utext, [encoded, id_1]);
+                                    }
+                                    else {
+                                        console.log(error);
+                                    }
+                                });
+                                return new response_1.ResponseService(null, 'Success').created(res);
+                                /*const transporter = nodemailer.createTransport({
+                                    host: 'smtp.gmail.com',
+                                    port: 587,
+                                    secure: false,
+                                    auth: {
+                                      user: 'your-email@gmail.com',
+                                      pass: 'your-password'
+                                    }
+                                  });
+                                  const mailOptions = {
+                                    from: 'your-email@gmail.com',
+                                    to: 'recipient-email@gmail.com',
+                                    subject: 'New Password',
+                                    text: `Your new password is: ${password}`
+                                  };
+                            
+                                  transporter.sendMail(mailOptions, (error
+                            } */
+                            }
+                        });
+                        return [3 /*break*/, 3];
+                    case 3: return [2 /*return*/];
+                }
             });
         });
     };
@@ -110,11 +164,42 @@ var UserService = /** @class */ (function () {
             });
         });
     };
-    UserService.prototype.updateUser = function (req, res) {
-        return __awaiter(this, void 0, void 0, function () { return __generator(this, function (_a) {
-            return [2 /*return*/];
-        }); });
+    UserService.prototype.updateUser = function (req, res, table, columns, values, where) {
+        return __awaiter(this, void 0, void 0, function () {
+            var cols, clause, i, sql, rows;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        cols = '';
+                        clause = '';
+                        for (i = 0; i < columns.length; i++) {
+                            if (i !== columns.length - 1) {
+                                clause = columns[i] + ' = ?, ';
+                            }
+                            else {
+                                clause = columns[i] + ' = ? ';
+                            }
+                            cols += clause;
+                        }
+                        sql = "UPDATE ".concat(table, " SET ").concat(cols, " WHERE ").concat(where);
+                        return [4 /*yield*/, connect_1.mySqlConnection.query(sql, values, function (error, results, fields) {
+                                if (error)
+                                    return new response_1.ResponseService(null, 'Something went wrong').error400(res);
+                                if (results.affectedRows === 0)
+                                    return new response_1.ResponseService(null, '404 not founnd').error404(res);
+                                if (results.affectedRows > 0)
+                                    return new response_1.ResponseService(columns, 'Something went wrong').error400(res);
+                            })];
+                    case 1:
+                        rows = _a.sent();
+                        return [2 /*return*/];
+                }
+            });
+        });
     };
     return UserService;
 }());
 exports.UserService = UserService;
+function hashedPassword(err, result) {
+    throw new Error('Function not implemented.');
+}

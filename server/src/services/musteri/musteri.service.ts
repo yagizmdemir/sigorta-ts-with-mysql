@@ -47,7 +47,7 @@ export class musteriService implements IMusteri {
 			if (result) return new ResponseService(result, 'Success').success(res);
 		});
 	}
-    getMusteri(req: Request, res: Response, table: string, where: string, search: string): Promise<void>{
+    async getMusteri(req: Request, res: Response, table: string, where: string, search: string): Promise<void>{
         const text = `SELECT * FROM ${table} WHERE ${where} = ?`;
 		const operation = mySqlConnection.query(text, search, (err, result) => {
 			if (err != null) return new ResponseService(null, 'Something went wrong').error400(res);
@@ -55,7 +55,7 @@ export class musteriService implements IMusteri {
 			if (result) return new ResponseService(result, 'Success').success(res);
 		});
     }
-    deleteMusteri(req: Request, res: Response, table: string, values: string, where: string): Promise<void> {
+    async deleteMusteri(req: Request, res: Response, table: string, values: string, where: string): Promise<void> {
         const text = `DELETE FROM ${table} WHERE ${where} = "${values}"`;
 		const operation = mySqlConnection.query(text, values, (err, result) => {
 			if (err != null) return new ResponseService(null, 'Something went wrong').error400(res);

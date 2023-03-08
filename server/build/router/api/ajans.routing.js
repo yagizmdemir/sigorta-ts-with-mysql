@@ -1,0 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var express_1 = require("express");
+var ajans_controller_1 = require("../../controller/ajans/ajans.controller");
+var router = (0, express_1.Router)();
+router.put('/ajans/:id', ajans_controller_1.updateAjans);
+router.delete('/ajans/:id', ajans_controller_1.deleteAjans);
+router.get('/ajans/:ad', ajans_controller_1.getAllAjans);
+router.get('/ajans/:ad', ajans_controller_1.getAjans);
+exports.default = router;

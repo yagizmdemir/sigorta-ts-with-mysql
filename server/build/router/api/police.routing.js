@@ -1,0 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var express_1 = require("express");
+var police_controller_1 = require("../../controller/police/police.controller");
+var router = (0, express_1.Router)();
+router.post('/musteri', addMusteri);
+//router.put('/ajans/:id', updateAjans);
+router.delete('/musteri/:ad', deleteMusteri);
+router.get('/police/:ad', police_controller_1.getAllPoliceler);
+router.get('/police/:ad', police_controller_1.getPolice);
+exports.default = router;
